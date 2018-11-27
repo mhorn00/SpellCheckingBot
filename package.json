@@ -1,0 +1,16 @@
+{
+  "name": "spellcheckbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node ./app/main.js"
+  },
+  "author": "Sarcly",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.0.0",
+    "discord.js": "^11.4.0",
+    "spellchecker": "^3.5.0"
+  }
+}

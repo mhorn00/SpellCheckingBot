@@ -11,6 +11,7 @@
   "dependencies": {
     "config": "^3.0.0",
     "discord.js": "^11.4.0",
+    "node-fetch": "^2.3.0",
     "spellchecker": "^3.5.0"
   }
 }

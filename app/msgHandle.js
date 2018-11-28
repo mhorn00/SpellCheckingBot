@@ -2,6 +2,7 @@ const logger = require('./logger.js');
 const c = require('config');
 const config = c.get("Main");
 const sp = require('spellchecker');
+const fetch = require('node-fetch');
 
 const handle = function (msg, client) {
     if (msg.content.charAt(0) === config.get("prefix") && !msg.author.bot) {
@@ -17,24 +18,28 @@ const handle = function (msg, client) {
             });
             client.destroy();
         }
-        if (cmd[0] === 'help') {
-            let p = config.get("prefix");
-            let pingH = `${p}ping - Pong\n`;
-            msg.channel.send(`${pingH}`).then(m => {
-                logger.logInfo(msg.author.username + ' executed command "' + cmd[0] + '", replyed with "Help Message"')
-            });
-        }
     }else{
-        let m = "";
-        msg.content.split(" ").forEach(e => {
-            if (sp.isMisspelled(e)){
-                m = m + "\*"+sp.getCorrectionsForMisspelling(e)[0]+" ";
-            }
-        });
-        if (m !== ""){
-            msg.channel.send(m);
-        }
+        if(msg.author.bot) return;
+        getGoogle(msg.content);
+        
     }
 };
 
+function getGigablast(text){
+    let url = `https://www.gigablast.com/search?q=${text}&userid=206&code=1993227782&n=0&format=json&spell=1&autospell=1`;
+    return fetch(url).then(results=>results.json());
+}
+
+function getGoogle(text){
+    let url = `https://www.google.com/search?q=${text}`;
+    fetch(url, {method: 'GET',headers:{
+        'Content-Type': 'text/html'
+      }}).then(res=>{
+        console.log(res)
+    })
+}
+
+function getBoth(text){
+return Promise.all([getGigablast(), getGoogle()]);
+}
 module.exports = { handle };

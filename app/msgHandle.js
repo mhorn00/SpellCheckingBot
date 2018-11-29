@@ -21,7 +21,15 @@ const handle = function (msg, client) {
         }
     }else{
         if(msg.author.bot) return;
-        getGoogle(msg.content);
+        getBoth(msg.content)
+            .then((res => {
+                let m = "<no correction>";
+                m = res[0].queryInfo.spellingSuggestion;
+                m += res[1]?" ::: "+res[1]:" ::: undefined";
+                if (msg.content == m) m = "<no correction>";
+                if (m === ' ::: undefined' || m === 'undefined ::: undefined') m = "<no correction>";
+                msg.channel.send(m)
+            }))
     }
 }
 
@@ -32,10 +40,10 @@ function getGigablast(text){
 
 function getGoogle(text){
     let url = `https://www.google.com/search?q=${text}`;
-    rp(url)
+    return rp({uri:url})/* ,transform: function(r){ return cheerio.load(r);} */
         .then(function(html){
             let $ = cheerio.load(html);
-            console.log($('p[id="fprs"]').html());
+            return $('a.gL9Hy').text()
             // $('a').each(function(k,v){
             //     console.log($(this).html());
             // })
@@ -45,7 +53,7 @@ function getGoogle(text){
 }
 
 function getBoth(text){
-    return Promise.all( [getGigablast(), getGoogle()] );
+    return Promise.all( [getGigablast(text), getGoogle(text)] );
 }
 
 module.exports = { handle };
